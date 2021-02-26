@@ -34,7 +34,8 @@ std::string generateFilename(std::string routineName)
 
 	static size_t counter = 0;
 	std::stringstream f;
-	f << "reactor_jit_llvm_" << std::setfill('0') << std::setw(4) << counter++ << "_" << routineName << ".asm";
+	//f << "reactor_jit_llvm_" << std::setfill('0') << std::setw(4) << counter++ << "_" << routineName << ".asm";
+	f << "reactor_jit_llvm_" << std::setfill('0') << std::setw(4) << counter++ << "_" << routineName << ".o";
 	return f.str();
 }
 
@@ -44,7 +45,8 @@ bool emitAsmFile(const std::string &filename, llvm::orc::JITTargetMachineBuilder
 	if(!targetMachine)
 		return false;
 
-	auto fileType = llvm::CGFT_AssemblyFile;
+	//auto fileType = llvm::CGFT_AssemblyFile;
+	auto fileType = llvm::CGFT_ObjectFile;
 	std::error_code EC;
 	llvm::raw_fd_ostream dest(filename, EC, llvm::sys::fs::OF_None);
 	ASSERT(!EC);

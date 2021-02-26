@@ -780,7 +780,7 @@ public:
 		}
 
 #ifdef ENABLE_RR_EMIT_ASM_FILE
-		rr::AsmFile::fixupAsmFile(asmFilename, addresses);
+		//rr::AsmFile::fixupAsmFile(asmFilename, addresses);
 #endif
 	}
 
