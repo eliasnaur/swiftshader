@@ -31,6 +31,7 @@ __pragma(warning(push))
 #include "llvm/ExecutionEngine/SectionMemoryManager.h"
 #include "llvm/IR/DiagnosticInfo.h"
 #include "llvm/IR/LegacyPassManager.h"
+#include "llvm/Support/CodeGen.h"
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Support/Host.h"
 #include "llvm/Support/TargetSelect.h"
@@ -163,8 +164,9 @@ JITGlobals *JITGlobals::get()
 
 		// TODO(b/171236524): JITTargetMachineBuilder::detectHost() currently uses the target triple of the host,
 		// rather than a valid triple for the current process. Once fixed, we can use that function instead.
-		//llvm::orc::JITTargetMachineBuilder jitTargetMachineBuilder(llvm::Triple(LLVM_DEFAULT_TARGET_TRIPLE));
-		llvm::orc::JITTargetMachineBuilder jitTargetMachineBuilder(llvm::Triple("aarch64-linux-gnu"));
+		llvm::orc::JITTargetMachineBuilder jitTargetMachineBuilder(llvm::Triple(LLVM_DEFAULT_TARGET_TRIPLE));
+		//llvm::orc::JITTargetMachineBuilder jitTargetMachineBuilder(llvm::Triple("aarch64-linux-android"));
+		jitTargetMachineBuilder.setRelocationModel(llvm::Reloc::PIC_);
 
 		// Retrieve host CPU name and sub-target features and add them to builder.
 		// Relocation model, code model and codegen opt level are kept to default values.
