@@ -48,7 +48,7 @@ JITTargetMachineBuilder::createTargetMachine() {
 
   auto *TM =
       TheTarget->createTargetMachine(TT.getTriple(), CPU, Features.getString(),
-                                     Options, RM, CM, OptLevel, /*JIT*/ true);
+                                     Options, RM, CM, OptLevel, /*JIT*/ false);
   if (!TM)
     return make_error<StringError>("Could not allocate target machine",
                                    inconvertibleErrorCode());
