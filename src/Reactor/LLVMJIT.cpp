@@ -156,13 +156,15 @@ JITGlobals *JITGlobals::get()
 
 		parseCommandLineOptionsOnce(sizeof(argv) / sizeof(argv[0]), argv);
 
-		llvm::InitializeNativeTarget();
-		llvm::InitializeNativeTargetAsmPrinter();
-		llvm::InitializeNativeTargetAsmParser();
+		llvm::InitializeAllTargets();
+		llvm::InitializeAllAsmPrinters();
+		llvm::InitializeAllAsmParsers();
+		llvm::InitializeAllTargetMCs();
 
 		// TODO(b/171236524): JITTargetMachineBuilder::detectHost() currently uses the target triple of the host,
 		// rather than a valid triple for the current process. Once fixed, we can use that function instead.
-		llvm::orc::JITTargetMachineBuilder jitTargetMachineBuilder(llvm::Triple(LLVM_DEFAULT_TARGET_TRIPLE));
+		//llvm::orc::JITTargetMachineBuilder jitTargetMachineBuilder(llvm::Triple(LLVM_DEFAULT_TARGET_TRIPLE));
+		llvm::orc::JITTargetMachineBuilder jitTargetMachineBuilder(llvm::Triple("aarch64-linux-gnu"));
 
 		// Retrieve host CPU name and sub-target features and add them to builder.
 		// Relocation model, code model and codegen opt level are kept to default values.
@@ -176,15 +178,15 @@ JITGlobals *JITGlobals::get()
 		(void)ok;  // getHostCPUFeatures always returns false on other platforms
 #endif
 
-		for(auto &feature : cpuFeatures)
+		/*for(auto &feature : cpuFeatures)
 		{
 			jitTargetMachineBuilder.getFeatures().AddFeature(feature.first(), feature.second);
-		}
+		}*/
 
 #if LLVM_VERSION_MAJOR >= 11 /* TODO(b/165000222): Unconditional after LLVM 11 upgrade */
 		jitTargetMachineBuilder.setCPU(std::string(llvm::sys::getHostCPUName()));
 #else
-		jitTargetMachineBuilder.setCPU(llvm::sys::getHostCPUName());
+		jitTargetMachineBuilder.setCPU(/*llvm::sys::getHostCPUName()*/"generic");
 #endif
 
 		// Reactor's MemorySanitizer support depends on intercepting __emutls_get_address calls.

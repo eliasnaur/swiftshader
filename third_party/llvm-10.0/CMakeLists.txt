@@ -825,7 +825,7 @@ set(LLVM_LIST
     ${LLVM_DIR}/lib/Transforms/Vectorize/VPlanVerifier.cpp
 )
 
-if(ARCH STREQUAL "x86" OR ARCH STREQUAL "x86_64")
+#if(ARCH STREQUAL "x86" OR ARCH STREQUAL "x86_64")
     list(APPEND LLVM_LIST
         ${LLVM_DIR}/lib/Target/X86/AsmParser/X86AsmParser.cpp
         ${LLVM_DIR}/lib/Target/X86/MCTargetDesc/X86AsmBackend.cpp
@@ -891,7 +891,7 @@ if(ARCH STREQUAL "x86" OR ARCH STREQUAL "x86_64")
         ${LLVM_DIR}/lib/Target/X86/X86WinAllocaExpander.cpp
         ${LLVM_DIR}/lib/Target/X86/X86WinEHState.cpp
     )
-elseif(ARCH STREQUAL "mipsel" OR ARCH STREQUAL "mips64el")
+#elseif(ARCH STREQUAL "mipsel" OR ARCH STREQUAL "mips64el")
     list(APPEND LLVM_LIST
         ${LLVM_DIR}/lib/Target/Mips/AsmParser/MipsAsmParser.cpp
         ${LLVM_DIR}/lib/Target/Mips/Disassembler/MipsDisassembler.cpp
@@ -949,7 +949,7 @@ elseif(ARCH STREQUAL "mipsel" OR ARCH STREQUAL "mips64el")
         ${LLVM_DIR}/lib/Target/Mips/MipsTargetObjectFile.cpp
         ${LLVM_DIR}/lib/Target/Mips/TargetInfo/MipsTargetInfo.cpp
     )
-elseif(ARCH STREQUAL "aarch64")
+#elseif(ARCH STREQUAL "aarch64")
     list(APPEND LLVM_LIST
         ${LLVM_DIR}/lib/Support/AArch64TargetParser.cpp
         ${LLVM_DIR}/lib/Target/AArch64/AArch64A53Fix835769.cpp
@@ -1013,7 +1013,7 @@ elseif(ARCH STREQUAL "aarch64")
         ${LLVM_DIR}/lib/Target/AArch64/TargetInfo/AArch64TargetInfo.cpp
         ${LLVM_DIR}/lib/Target/AArch64/Utils/AArch64BaseInfo.cpp
     )
-elseif(ARCH STREQUAL "arm")
+#elseif(ARCH STREQUAL "arm")
     list(APPEND LLVM_LIST
         ${LLVM_DIR}/lib/Target/ARM/A15SDOptimizer.cpp
         ${LLVM_DIR}/lib/Target/ARM/ARMAsmPrinter.cpp
@@ -1076,57 +1076,6 @@ elseif(ARCH STREQUAL "arm")
         ${LLVM_DIR}/lib/Target/ARM/ThumbRegisterInfo.cpp
         ${LLVM_DIR}/lib/Target/ARM/Utils/ARMBaseInfo.cpp
     )
-elseif(ARCH STREQUAL "ppc64le")
-    list(APPEND LLVM_LIST
-        ${LLVM_DIR}/lib/Target/PowerPC/AsmParser/PPCAsmParser.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/Disassembler/PPCDisassembler.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/MCTargetDesc/PPCAsmBackend.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/MCTargetDesc/PPCELFObjectWriter.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/MCTargetDesc/PPCInstPrinter.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/MCTargetDesc/PPCMachObjectWriter.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/MCTargetDesc/PPCMCAsmInfo.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/MCTargetDesc/PPCMCCodeEmitter.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/MCTargetDesc/PPCMCExpr.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/MCTargetDesc/PPCMCTargetDesc.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/MCTargetDesc/PPCPredicates.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/MCTargetDesc/PPCXCOFFObjectWriter.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCAsmPrinter.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCBoolRetToInt.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCBranchCoalescing.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCBranchSelector.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCCallingConv.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCCCState.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCCTRLoops.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCEarlyReturn.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCExpandISEL.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCFastISel.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCFrameLowering.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCHazardRecognizers.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCInstrInfo.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCISelDAGToDAG.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCISelLowering.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCLoopInstrFormPrep.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCLowerMASSVEntries.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCMachineFunctionInfo.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCMachineScheduler.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCMCInstLower.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCMIPeephole.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCPreEmitPeephole.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCQPXLoadSplat.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCReduceCRLogicals.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCRegisterInfo.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCSubtarget.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCTargetMachine.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCTargetObjectFile.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCTargetTransformInfo.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCTLSDynamicCall.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCTOCRegDeps.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCVSXCopy.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCVSXFMAMutate.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/PPCVSXSwapRemoval.cpp
-        ${LLVM_DIR}/lib/Target/PowerPC/TargetInfo/PowerPCTargetInfo.cpp
-    )
-endif()
 
 if(REACTOR_EMIT_DEBUG_INFO)
     list(APPEND LLVM_LIST
