@@ -4674,7 +4674,7 @@ RValue<Float> RcpApprox(RValue<Float> x, bool exactAtPow2 = false);
 template<typename T>
 static RValue<T> DoRcp(RValue<T> x, Precision p, bool finite, bool exactAtPow2)
 {
-#if defined(__i386__) || defined(__x86_64__)  // On x86, 1/x is fast enough, except for lower precision
+#if defined(USE_X86)  // On x86, 1/x is fast enough, except for lower precision
 	bool approx = HasRcpApprox() && (p != Precision::Full);
 #else
 	bool approx = HasRcpApprox();
@@ -4747,7 +4747,7 @@ RValue<Int> CmpNEQ(RValue<Int> x, RValue<Int> y)
 template<typename T>
 static RValue<T> DoRcpSqrt(RValue<T> x, Precision p)
 {
-#if defined(__i386__) || defined(__x86_64__)  // On x86, 1/x is fast enough, except for lower precision
+#if defined(USE_X86)  // On x86, 1/x is fast enough, except for lower precision
 	bool approx = HasRcpApprox() && (p != Precision::Full);
 #else
 	bool approx = HasRcpApprox();

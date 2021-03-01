@@ -148,7 +148,7 @@ JITGlobals *JITGlobals::get()
 	static JITGlobals instance = [] {
 		const char *argv[] = {
 			"Reactor",
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 			"-x86-asm-syntax=intel",  // Use Intel syntax rather than the default AT&T
 #endif
 			"-warn-stack-size=524288"  // Warn when a function uses more than 512 KiB of stack memory
@@ -171,7 +171,7 @@ JITGlobals *JITGlobals::get()
 		llvm::StringMap<bool> cpuFeatures;
 		bool ok = llvm::sys::getHostCPUFeatures(cpuFeatures);
 
-#if defined(__i386__) || defined(__x86_64__) || \
+#if defined(USE_X86) || \
     (defined(__linux__) && (defined(__arm__) || defined(__aarch64__)))
 		ASSERT_MSG(ok, "llvm::sys::getHostCPUFeatures returned false");
 #else

@@ -39,7 +39,7 @@
 #include <thread>
 #include <unordered_map>
 
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 #	include <xmmintrin.h>
 #endif
 
@@ -113,7 +113,7 @@ llvm::Value *lowerPCMP(llvm::ICmpInst::Predicate pred, llvm::Value *x,
 	return jit->builder->CreateSExt(jit->builder->CreateICmp(pred, x, y), dstTy, "");
 }
 
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 llvm::Value *lowerPMOV(llvm::Value *op, llvm::Type *dstType, bool sext)
 {
 	llvm::VectorType *srcTy = llvm::cast<llvm::VectorType>(op->getType());
@@ -137,7 +137,7 @@ llvm::Value *lowerPABS(llvm::Value *v)
 }
 #endif  // defined(__i386__) || defined(__x86_64__)
 
-#if !defined(__i386__) && !defined(__x86_64__)
+#if !defined(USE_X86)
 llvm::Value *lowerPFMINMAX(llvm::Value *x, llvm::Value *y,
                            llvm::FCmpInst::Predicate pred)
 {
@@ -1828,7 +1828,7 @@ Type *SByte4::type()
 RValue<Byte8> AddSat(RValue<Byte8> x, RValue<Byte8> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::paddusb(x, y);
 #else
 	return As<Byte8>(V(lowerPUADDSAT(V(x.value()), V(y.value()))));
@@ -1838,7 +1838,7 @@ RValue<Byte8> AddSat(RValue<Byte8> x, RValue<Byte8> y)
 RValue<Byte8> SubSat(RValue<Byte8> x, RValue<Byte8> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::psubusb(x, y);
 #else
 	return As<Byte8>(V(lowerPUSUBSAT(V(x.value()), V(y.value()))));
@@ -1848,7 +1848,7 @@ RValue<Byte8> SubSat(RValue<Byte8> x, RValue<Byte8> y)
 RValue<Int> SignMask(RValue<Byte8> x)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::pmovmskb(x);
 #else
 	return As<Int>(V(lowerSignMask(V(x.value()), T(Int::type()))));
@@ -1857,7 +1857,7 @@ RValue<Int> SignMask(RValue<Byte8> x)
 
 //	RValue<Byte8> CmpGT(RValue<Byte8> x, RValue<Byte8> y)
 //	{
-//#if defined(__i386__) || defined(__x86_64__)
+//#if defined(USE_X86)
 //		return x86::pcmpgtb(x, y);   // FIXME: Signedness
 //#else
 //		return As<Byte8>(V(lowerPCMP(llvm::ICmpInst::ICMP_SGT, V(x.value()), V(y.value()), T(Byte8::type()))));
@@ -1867,7 +1867,7 @@ RValue<Int> SignMask(RValue<Byte8> x)
 RValue<Byte8> CmpEQ(RValue<Byte8> x, RValue<Byte8> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::pcmpeqb(x, y);
 #else
 	return As<Byte8>(V(lowerPCMP(llvm::ICmpInst::ICMP_EQ, V(x.value()), V(y.value()), T(Byte8::type()))));
@@ -1882,7 +1882,7 @@ Type *Byte8::type()
 RValue<SByte8> AddSat(RValue<SByte8> x, RValue<SByte8> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::paddsb(x, y);
 #else
 	return As<SByte8>(V(lowerPSADDSAT(V(x.value()), V(y.value()))));
@@ -1892,7 +1892,7 @@ RValue<SByte8> AddSat(RValue<SByte8> x, RValue<SByte8> y)
 RValue<SByte8> SubSat(RValue<SByte8> x, RValue<SByte8> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::psubsb(x, y);
 #else
 	return As<SByte8>(V(lowerPSSUBSAT(V(x.value()), V(y.value()))));
@@ -1902,7 +1902,7 @@ RValue<SByte8> SubSat(RValue<SByte8> x, RValue<SByte8> y)
 RValue<Int> SignMask(RValue<SByte8> x)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::pmovmskb(As<Byte8>(x));
 #else
 	return As<Int>(V(lowerSignMask(V(x.value()), T(Int::type()))));
@@ -1912,7 +1912,7 @@ RValue<Int> SignMask(RValue<SByte8> x)
 RValue<Byte8> CmpGT(RValue<SByte8> x, RValue<SByte8> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::pcmpgtb(x, y);
 #else
 	return As<Byte8>(V(lowerPCMP(llvm::ICmpInst::ICMP_SGT, V(x.value()), V(y.value()), T(Byte8::type()))));
@@ -1922,7 +1922,7 @@ RValue<Byte8> CmpGT(RValue<SByte8> x, RValue<SByte8> y)
 RValue<Byte8> CmpEQ(RValue<SByte8> x, RValue<SByte8> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::pcmpeqb(As<Byte8>(x), As<Byte8>(y));
 #else
 	return As<Byte8>(V(lowerPCMP(llvm::ICmpInst::ICMP_EQ, V(x.value()), V(y.value()), T(Byte8::type()))));
@@ -1974,7 +1974,7 @@ Short4::Short4(RValue<Float4> cast)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
 	Int4 v4i32 = Int4(cast);
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	v4i32 = As<Int4>(x86::packssdw(v4i32, v4i32));
 #else
 	Value *v = v4i32.loadValue();
@@ -1987,7 +1987,7 @@ Short4::Short4(RValue<Float4> cast)
 RValue<Short4> operator<<(RValue<Short4> lhs, unsigned char rhs)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	//	return RValue<Short4>(Nucleus::createShl(lhs.value(), rhs.value()));
 
 	return x86::psllw(lhs, rhs);
@@ -1999,7 +1999,7 @@ RValue<Short4> operator<<(RValue<Short4> lhs, unsigned char rhs)
 RValue<Short4> operator>>(RValue<Short4> lhs, unsigned char rhs)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::psraw(lhs, rhs);
 #else
 	return As<Short4>(V(lowerVectorAShr(V(lhs.value()), rhs)));
@@ -2009,7 +2009,7 @@ RValue<Short4> operator>>(RValue<Short4> lhs, unsigned char rhs)
 RValue<Short4> Max(RValue<Short4> x, RValue<Short4> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::pmaxsw(x, y);
 #else
 	return RValue<Short4>(V(lowerPMINMAX(V(x.value()), V(y.value()), llvm::ICmpInst::ICMP_SGT)));
@@ -2019,7 +2019,7 @@ RValue<Short4> Max(RValue<Short4> x, RValue<Short4> y)
 RValue<Short4> Min(RValue<Short4> x, RValue<Short4> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::pminsw(x, y);
 #else
 	return RValue<Short4>(V(lowerPMINMAX(V(x.value()), V(y.value()), llvm::ICmpInst::ICMP_SLT)));
@@ -2029,7 +2029,7 @@ RValue<Short4> Min(RValue<Short4> x, RValue<Short4> y)
 RValue<Short4> AddSat(RValue<Short4> x, RValue<Short4> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::paddsw(x, y);
 #else
 	return As<Short4>(V(lowerPSADDSAT(V(x.value()), V(y.value()))));
@@ -2039,7 +2039,7 @@ RValue<Short4> AddSat(RValue<Short4> x, RValue<Short4> y)
 RValue<Short4> SubSat(RValue<Short4> x, RValue<Short4> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::psubsw(x, y);
 #else
 	return As<Short4>(V(lowerPSSUBSAT(V(x.value()), V(y.value()))));
@@ -2049,7 +2049,7 @@ RValue<Short4> SubSat(RValue<Short4> x, RValue<Short4> y)
 RValue<Short4> MulHigh(RValue<Short4> x, RValue<Short4> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::pmulhw(x, y);
 #else
 	return As<Short4>(V(lowerMulHigh(V(x.value()), V(y.value()), true)));
@@ -2059,7 +2059,7 @@ RValue<Short4> MulHigh(RValue<Short4> x, RValue<Short4> y)
 RValue<Int2> MulAdd(RValue<Short4> x, RValue<Short4> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::pmaddwd(x, y);
 #else
 	return As<Int2>(V(lowerMulAdd(V(x.value()), V(y.value()))));
@@ -2069,7 +2069,7 @@ RValue<Int2> MulAdd(RValue<Short4> x, RValue<Short4> y)
 RValue<SByte8> PackSigned(RValue<Short4> x, RValue<Short4> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	auto result = x86::packsswb(x, y);
 #else
 	auto result = V(lowerPack(V(x.value()), V(y.value()), true));
@@ -2080,7 +2080,7 @@ RValue<SByte8> PackSigned(RValue<Short4> x, RValue<Short4> y)
 RValue<Byte8> PackUnsigned(RValue<Short4> x, RValue<Short4> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	auto result = x86::packuswb(x, y);
 #else
 	auto result = V(lowerPack(V(x.value()), V(y.value()), false));
@@ -2091,7 +2091,7 @@ RValue<Byte8> PackUnsigned(RValue<Short4> x, RValue<Short4> y)
 RValue<Short4> CmpGT(RValue<Short4> x, RValue<Short4> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::pcmpgtw(x, y);
 #else
 	return As<Short4>(V(lowerPCMP(llvm::ICmpInst::ICMP_SGT, V(x.value()), V(y.value()), T(Short4::type()))));
@@ -2101,7 +2101,7 @@ RValue<Short4> CmpGT(RValue<Short4> x, RValue<Short4> y)
 RValue<Short4> CmpEQ(RValue<Short4> x, RValue<Short4> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::pcmpeqw(x, y);
 #else
 	return As<Short4>(V(lowerPCMP(llvm::ICmpInst::ICMP_EQ, V(x.value()), V(y.value()), T(Short4::type()))));
@@ -2118,7 +2118,7 @@ UShort4::UShort4(RValue<Float4> cast, bool saturate)
 	RR_DEBUG_INFO_UPDATE_LOC();
 	if(saturate)
 	{
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 		if(CPUID::supportsSSE4_1())
 		{
 			Int4 int4(Min(cast, Float4(0xFFFF)));  // packusdw takes care of 0x0000 saturation
@@ -2139,7 +2139,7 @@ UShort4::UShort4(RValue<Float4> cast, bool saturate)
 RValue<UShort4> operator<<(RValue<UShort4> lhs, unsigned char rhs)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	//	return RValue<Short4>(Nucleus::createShl(lhs.value(), rhs.value()));
 
 	return As<UShort4>(x86::psllw(As<Short4>(lhs), rhs));
@@ -2151,7 +2151,7 @@ RValue<UShort4> operator<<(RValue<UShort4> lhs, unsigned char rhs)
 RValue<UShort4> operator>>(RValue<UShort4> lhs, unsigned char rhs)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	//	return RValue<Short4>(Nucleus::createLShr(lhs.value(), rhs.value()));
 
 	return x86::psrlw(lhs, rhs);
@@ -2175,7 +2175,7 @@ RValue<UShort4> Min(RValue<UShort4> x, RValue<UShort4> y)
 RValue<UShort4> AddSat(RValue<UShort4> x, RValue<UShort4> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::paddusw(x, y);
 #else
 	return As<UShort4>(V(lowerPUADDSAT(V(x.value()), V(y.value()))));
@@ -2185,7 +2185,7 @@ RValue<UShort4> AddSat(RValue<UShort4> x, RValue<UShort4> y)
 RValue<UShort4> SubSat(RValue<UShort4> x, RValue<UShort4> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::psubusw(x, y);
 #else
 	return As<UShort4>(V(lowerPUSUBSAT(V(x.value()), V(y.value()))));
@@ -2195,7 +2195,7 @@ RValue<UShort4> SubSat(RValue<UShort4> x, RValue<UShort4> y)
 RValue<UShort4> MulHigh(RValue<UShort4> x, RValue<UShort4> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::pmulhuw(x, y);
 #else
 	return As<UShort4>(V(lowerMulHigh(V(x.value()), V(y.value()), false)));
@@ -2205,7 +2205,7 @@ RValue<UShort4> MulHigh(RValue<UShort4> x, RValue<UShort4> y)
 RValue<UShort4> Average(RValue<UShort4> x, RValue<UShort4> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::pavgw(x, y);
 #else
 	return As<UShort4>(V(lowerPAVG(V(x.value()), V(y.value()))));
@@ -2220,7 +2220,7 @@ Type *UShort4::type()
 RValue<Short8> operator<<(RValue<Short8> lhs, unsigned char rhs)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::psllw(lhs, rhs);
 #else
 	return As<Short8>(V(lowerVectorShl(V(lhs.value()), rhs)));
@@ -2230,7 +2230,7 @@ RValue<Short8> operator<<(RValue<Short8> lhs, unsigned char rhs)
 RValue<Short8> operator>>(RValue<Short8> lhs, unsigned char rhs)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::psraw(lhs, rhs);
 #else
 	return As<Short8>(V(lowerVectorAShr(V(lhs.value()), rhs)));
@@ -2240,7 +2240,7 @@ RValue<Short8> operator>>(RValue<Short8> lhs, unsigned char rhs)
 RValue<Int4> MulAdd(RValue<Short8> x, RValue<Short8> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::pmaddwd(x, y);
 #else
 	return As<Int4>(V(lowerMulAdd(V(x.value()), V(y.value()))));
@@ -2250,7 +2250,7 @@ RValue<Int4> MulAdd(RValue<Short8> x, RValue<Short8> y)
 RValue<Short8> MulHigh(RValue<Short8> x, RValue<Short8> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::pmulhw(x, y);
 #else
 	return As<Short8>(V(lowerMulHigh(V(x.value()), V(y.value()), true)));
@@ -2265,7 +2265,7 @@ Type *Short8::type()
 RValue<UShort8> operator<<(RValue<UShort8> lhs, unsigned char rhs)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return As<UShort8>(x86::psllw(As<Short8>(lhs), rhs));
 #else
 	return As<UShort8>(V(lowerVectorShl(V(lhs.value()), rhs)));
@@ -2275,7 +2275,7 @@ RValue<UShort8> operator<<(RValue<UShort8> lhs, unsigned char rhs)
 RValue<UShort8> operator>>(RValue<UShort8> lhs, unsigned char rhs)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::psrlw(lhs, rhs);  // FIXME: Fallback required
 #else
 	return As<UShort8>(V(lowerVectorLShr(V(lhs.value()), rhs)));
@@ -2285,7 +2285,7 @@ RValue<UShort8> operator>>(RValue<UShort8> lhs, unsigned char rhs)
 RValue<UShort8> MulHigh(RValue<UShort8> x, RValue<UShort8> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::pmulhuw(x, y);
 #else
 	return As<UShort8>(V(lowerMulHigh(V(x.value()), V(y.value()), false)));
@@ -2340,7 +2340,7 @@ const Int &operator--(Int &val)  // Pre-decrement
 RValue<Int> RoundInt(RValue<Float> cast)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::cvtss2si(cast);
 #else
 	return RValue<Int>(V(lowerRoundInt(V(cast.value()), T(Int::type()))));
@@ -2406,7 +2406,7 @@ const UInt &operator--(UInt &val)  // Pre-decrement
 
 //	RValue<UInt> RoundUInt(RValue<Float> cast)
 //	{
-//#if defined(__i386__) || defined(__x86_64__)
+//#if defined(USE_X86)
 //		return x86::cvtss2si(val);   // FIXME: Unsigned
 //#else
 //		return IfThenElse(cast > 0.0f, Int(cast + 0.5f), Int(cast - 0.5f));
@@ -2432,7 +2432,7 @@ Type *UInt::type()
 RValue<Int2> operator<<(RValue<Int2> lhs, unsigned char rhs)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	//	return RValue<Int2>(Nucleus::createShl(lhs.value(), rhs.value()));
 
 	return x86::pslld(lhs, rhs);
@@ -2444,7 +2444,7 @@ RValue<Int2> operator<<(RValue<Int2> lhs, unsigned char rhs)
 RValue<Int2> operator>>(RValue<Int2> lhs, unsigned char rhs)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	//	return RValue<Int2>(Nucleus::createAShr(lhs.value(), rhs.value()));
 
 	return x86::psrad(lhs, rhs);
@@ -2461,7 +2461,7 @@ Type *Int2::type()
 RValue<UInt2> operator<<(RValue<UInt2> lhs, unsigned char rhs)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	//	return RValue<UInt2>(Nucleus::createShl(lhs.value(), rhs.value()));
 
 	return As<UInt2>(x86::pslld(As<Int2>(lhs), rhs));
@@ -2473,7 +2473,7 @@ RValue<UInt2> operator<<(RValue<UInt2> lhs, unsigned char rhs)
 RValue<UInt2> operator>>(RValue<UInt2> lhs, unsigned char rhs)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	//	return RValue<UInt2>(Nucleus::createLShr(lhs.value(), rhs.value()));
 
 	return x86::psrld(lhs, rhs);
@@ -2491,7 +2491,7 @@ Int4::Int4(RValue<Byte4> cast)
     : XYZW(this)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	if(CPUID::supportsSSE4_1())
 	{
 		*this = x86::pmovzxbd(As<Byte16>(cast));
@@ -2515,7 +2515,7 @@ Int4::Int4(RValue<SByte4> cast)
     : XYZW(this)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	if(CPUID::supportsSSE4_1())
 	{
 		*this = x86::pmovsxbd(As<SByte16>(cast));
@@ -2539,7 +2539,7 @@ Int4::Int4(RValue<Short4> cast)
     : XYZW(this)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	if(CPUID::supportsSSE4_1())
 	{
 		*this = x86::pmovsxwd(As<Short8>(cast));
@@ -2557,7 +2557,7 @@ Int4::Int4(RValue<UShort4> cast)
     : XYZW(this)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	if(CPUID::supportsSSE4_1())
 	{
 		*this = x86::pmovzxwd(As<UShort8>(cast));
@@ -2587,7 +2587,7 @@ Int4::Int4(RValue<Int> rhs)
 RValue<Int4> operator<<(RValue<Int4> lhs, unsigned char rhs)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::pslld(lhs, rhs);
 #else
 	return As<Int4>(V(lowerVectorShl(V(lhs.value()), rhs)));
@@ -2597,7 +2597,7 @@ RValue<Int4> operator<<(RValue<Int4> lhs, unsigned char rhs)
 RValue<Int4> operator>>(RValue<Int4> lhs, unsigned char rhs)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::psrad(lhs, rhs);
 #else
 	return As<Int4>(V(lowerVectorAShr(V(lhs.value()), rhs)));
@@ -2643,7 +2643,7 @@ RValue<Int4> CmpNLE(RValue<Int4> x, RValue<Int4> y)
 RValue<Int4> Max(RValue<Int4> x, RValue<Int4> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	if(CPUID::supportsSSE4_1())
 	{
 		return x86::pmaxsd(x, y);
@@ -2659,7 +2659,7 @@ RValue<Int4> Max(RValue<Int4> x, RValue<Int4> y)
 RValue<Int4> Min(RValue<Int4> x, RValue<Int4> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	if(CPUID::supportsSSE4_1())
 	{
 		return x86::pminsd(x, y);
@@ -2675,7 +2675,7 @@ RValue<Int4> Min(RValue<Int4> x, RValue<Int4> y)
 RValue<Int4> RoundInt(RValue<Float4> cast)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::cvtps2dq(cast);
 #else
 	return As<Int4>(V(lowerRoundInt(V(cast.value()), T(Int4::type()))));
@@ -2685,7 +2685,7 @@ RValue<Int4> RoundInt(RValue<Float4> cast)
 RValue<Int4> RoundIntClamped(RValue<Float4> cast)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	// cvtps2dq produces 0x80000000, a negative value, for input larger than
 	// 2147483520.0, so clamp to 2147483520. Values less than -2147483520.0
 	// saturate to 0x80000000.
@@ -2714,7 +2714,7 @@ RValue<UInt4> MulHigh(RValue<UInt4> x, RValue<UInt4> y)
 RValue<Short8> PackSigned(RValue<Int4> x, RValue<Int4> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::packssdw(x, y);
 #else
 	return As<Short8>(V(lowerPack(V(x.value()), V(y.value()), true)));
@@ -2724,7 +2724,7 @@ RValue<Short8> PackSigned(RValue<Int4> x, RValue<Int4> y)
 RValue<UShort8> PackUnsigned(RValue<Int4> x, RValue<Int4> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::packusdw(x, y);
 #else
 	return As<UShort8>(V(lowerPack(V(x.value()), V(y.value()), false)));
@@ -2734,7 +2734,7 @@ RValue<UShort8> PackUnsigned(RValue<Int4> x, RValue<Int4> y)
 RValue<Int> SignMask(RValue<Int4> x)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::movmskps(As<Float4>(x));
 #else
 	return As<Int>(V(lowerSignMask(V(x.value()), T(Int::type()))));
@@ -2770,7 +2770,7 @@ UInt4::UInt4(RValue<UInt> rhs)
 RValue<UInt4> operator<<(RValue<UInt4> lhs, unsigned char rhs)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return As<UInt4>(x86::pslld(As<Int4>(lhs), rhs));
 #else
 	return As<UInt4>(V(lowerVectorShl(V(lhs.value()), rhs)));
@@ -2780,7 +2780,7 @@ RValue<UInt4> operator<<(RValue<UInt4> lhs, unsigned char rhs)
 RValue<UInt4> operator>>(RValue<UInt4> lhs, unsigned char rhs)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::psrld(lhs, rhs);
 #else
 	return As<UInt4>(V(lowerVectorLShr(V(lhs.value()), rhs)));
@@ -2826,7 +2826,7 @@ RValue<UInt4> CmpNLE(RValue<UInt4> x, RValue<UInt4> y)
 RValue<UInt4> Max(RValue<UInt4> x, RValue<UInt4> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	if(CPUID::supportsSSE4_1())
 	{
 		return x86::pmaxud(x, y);
@@ -2842,7 +2842,7 @@ RValue<UInt4> Max(RValue<UInt4> x, RValue<UInt4> y)
 RValue<UInt4> Min(RValue<UInt4> x, RValue<UInt4> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	if(CPUID::supportsSSE4_1())
 	{
 		return x86::pminud(x, y);
@@ -2868,7 +2868,7 @@ Type *Half::type()
 RValue<Float> Rcp_pp(RValue<Float> x, bool exactAtPow2)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	if(exactAtPow2)
 	{
 		// rcpss uses a piecewise-linear approximation which minimizes the relative error
@@ -2884,7 +2884,7 @@ RValue<Float> Rcp_pp(RValue<Float> x, bool exactAtPow2)
 RValue<Float> RcpSqrt_pp(RValue<Float> x)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::rsqrtss(x);
 #else
 	return As<Float>(V(lowerRSQRT(V(x.value()))));
@@ -2893,7 +2893,7 @@ RValue<Float> RcpSqrt_pp(RValue<Float> x)
 
 bool HasRcpApprox()
 {
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return true;
 #else
 	return false;
@@ -2902,7 +2902,7 @@ bool HasRcpApprox()
 
 RValue<Float4> RcpApprox(RValue<Float4> x, bool exactAtPow2)
 {
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	if(exactAtPow2)
 	{
 		// rcpps uses a piecewise-linear approximation which minimizes the relative error
@@ -2918,7 +2918,7 @@ RValue<Float4> RcpApprox(RValue<Float4> x, bool exactAtPow2)
 
 RValue<Float> RcpApprox(RValue<Float> x, bool exactAtPow2)
 {
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	if(exactAtPow2)
 	{
 		// rcpss uses a piecewise-linear approximation which minimizes the relative error
@@ -2934,7 +2934,7 @@ RValue<Float> RcpApprox(RValue<Float> x, bool exactAtPow2)
 
 bool HasRcpSqrtApprox()
 {
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return true;
 #else
 	return false;
@@ -2943,7 +2943,7 @@ bool HasRcpSqrtApprox()
 
 RValue<Float4> RcpSqrtApprox(RValue<Float4> x)
 {
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::rsqrtps(x);
 #else
 	UNREACHABLE("RValue<Float4> RcpSqrtApprox() not available on this platform");
@@ -2953,7 +2953,7 @@ RValue<Float4> RcpSqrtApprox(RValue<Float4> x)
 
 RValue<Float> RcpSqrtApprox(RValue<Float> x)
 {
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::rsqrtss(x);
 #else
 	UNREACHABLE("RValue<Float4> RcpSqrtApprox() not available on this platform");
@@ -2964,7 +2964,7 @@ RValue<Float> RcpSqrtApprox(RValue<Float> x)
 RValue<Float> Sqrt(RValue<Float> x)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::sqrtss(x);
 #else
 	return As<Float>(V(lowerSQRT(V(x.value()))));
@@ -2974,7 +2974,7 @@ RValue<Float> Sqrt(RValue<Float> x)
 RValue<Float> Round(RValue<Float> x)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	if(CPUID::supportsSSE4_1())
 	{
 		return x86::roundss(x, 0);
@@ -2991,7 +2991,7 @@ RValue<Float> Round(RValue<Float> x)
 RValue<Float> Trunc(RValue<Float> x)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	if(CPUID::supportsSSE4_1())
 	{
 		return x86::roundss(x, 3);
@@ -3008,7 +3008,7 @@ RValue<Float> Trunc(RValue<Float> x)
 RValue<Float> Frac(RValue<Float> x)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	if(CPUID::supportsSSE4_1())
 	{
 		return x - x86::floorss(x);
@@ -3027,7 +3027,7 @@ RValue<Float> Frac(RValue<Float> x)
 RValue<Float> Floor(RValue<Float> x)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	if(CPUID::supportsSSE4_1())
 	{
 		return x86::floorss(x);
@@ -3044,7 +3044,7 @@ RValue<Float> Floor(RValue<Float> x)
 RValue<Float> Ceil(RValue<Float> x)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	if(CPUID::supportsSSE4_1())
 	{
 		return x86::ceilss(x);
@@ -3094,7 +3094,7 @@ Float4::Float4(RValue<Float> rhs)
 RValue<Float4> Max(RValue<Float4> x, RValue<Float4> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::maxps(x, y);
 #else
 	return As<Float4>(V(lowerPFMINMAX(V(x.value()), V(y.value()), llvm::FCmpInst::FCMP_OGT)));
@@ -3104,7 +3104,7 @@ RValue<Float4> Max(RValue<Float4> x, RValue<Float4> y)
 RValue<Float4> Min(RValue<Float4> x, RValue<Float4> y)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::minps(x, y);
 #else
 	return As<Float4>(V(lowerPFMINMAX(V(x.value()), V(y.value()), llvm::FCmpInst::FCMP_OLT)));
@@ -3114,7 +3114,7 @@ RValue<Float4> Min(RValue<Float4> x, RValue<Float4> y)
 RValue<Float4> Rcp_pp(RValue<Float4> x, bool exactAtPow2)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	if(exactAtPow2)
 	{
 		// rcpps uses a piecewise-linear approximation which minimizes the relative error
@@ -3130,7 +3130,7 @@ RValue<Float4> Rcp_pp(RValue<Float4> x, bool exactAtPow2)
 RValue<Float4> RcpSqrt_pp(RValue<Float4> x)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::rsqrtps(x);
 #else
 	return As<Float4>(V(lowerRSQRT(V(x.value()))));
@@ -3140,7 +3140,7 @@ RValue<Float4> RcpSqrt_pp(RValue<Float4> x)
 RValue<Float4> Sqrt(RValue<Float4> x)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::sqrtps(x);
 #else
 	return As<Float4>(V(lowerSQRT(V(x.value()))));
@@ -3150,7 +3150,7 @@ RValue<Float4> Sqrt(RValue<Float4> x)
 RValue<Int> SignMask(RValue<Float4> x)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	return x86::movmskps(x);
 #else
 	return As<Int>(V(lowerFPSignMask(V(x.value()), T(Int::type()))));
@@ -3238,7 +3238,7 @@ RValue<Int4> CmpUNLE(RValue<Float4> x, RValue<Float4> y)
 RValue<Float4> Round(RValue<Float4> x)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	if(CPUID::supportsSSE4_1())
 	{
 		return x86::roundps(x, 0);
@@ -3255,7 +3255,7 @@ RValue<Float4> Round(RValue<Float4> x)
 RValue<Float4> Trunc(RValue<Float4> x)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	if(CPUID::supportsSSE4_1())
 	{
 		return x86::roundps(x, 3);
@@ -3274,7 +3274,7 @@ RValue<Float4> Frac(RValue<Float4> x)
 	RR_DEBUG_INFO_UPDATE_LOC();
 	Float4 frc;
 
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	if(CPUID::supportsSSE4_1())
 	{
 		frc = x - Floor(x);
@@ -3297,7 +3297,7 @@ RValue<Float4> Frac(RValue<Float4> x)
 RValue<Float4> Floor(RValue<Float4> x)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	if(CPUID::supportsSSE4_1())
 	{
 		return x86::floorps(x);
@@ -3314,7 +3314,7 @@ RValue<Float4> Floor(RValue<Float4> x)
 RValue<Float4> Ceil(RValue<Float4> x)
 {
 	RR_DEBUG_INFO_UPDATE_LOC();
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 	if(CPUID::supportsSSE4_1())
 	{
 		return x86::ceilps(x);
@@ -3575,7 +3575,7 @@ void Breakpoint()
 
 namespace rr {
 
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(USE_X86)
 namespace x86 {
 
 // Differs from IRBuilder<>::CreateUnaryIntrinsic() in that it only accepts native instruction intrinsics which have
