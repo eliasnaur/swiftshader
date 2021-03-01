@@ -24,19 +24,19 @@
 #  error Please define the macro LLVM_DISASSEMBLER(TargetName)
 #endif
 
-#if defined(__aarch64__)
+#if 1
 LLVM_DISASSEMBLER(AArch64)
 #endif
-#if defined(__arm__)
+#if 1
 LLVM_DISASSEMBLER(ARM)
 #endif
-#if defined(__i386__) || defined(__x86_64__)
+#if 1
 LLVM_DISASSEMBLER(X86)
 #endif
-#if defined(__mips__)
+#if 0
 LLVM_DISASSEMBLER(Mips)
 #endif
-#if defined(__powerpc64__)
+#if 0
 LLVM_DISASSEMBLER(PowerPC)
 #endif
 

@@ -266,7 +266,8 @@ def copy_platform_file(platform, src, dst):
     # Build architecture-specific conditions.
     conds = {}
     for arch, defs in LLVM_TARGETS:
-        conds[arch] = ' || '.join('defined(' + v + ')' for v in defs)
+        conds[arch] = "1"
+    #    conds[arch] = ' || '.join('defined(' + v + ')' for v in defs)
 
     # Get a set of platform-specific triples.
     triples = LLVM_TRIPLES[platform]
